@@ -34,7 +34,7 @@ export async function createVideo(images: Blob[]) {
   images.forEach(async (img, i) => {
     const filename = `image_${i}.jpg`;
     console.log(img)
-    await ffmpeg.writeFile(filename, await fetchFile())
+    await ffmpeg.writeFile(filename, await fetchFile(img))
     console.log(`Written file: ${filename}, size: ballz bytes`);
   })
 
