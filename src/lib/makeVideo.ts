@@ -1,4 +1,5 @@
 import { FFmpeg } from "@ffmpeg/ffmpeg";
+import { FileData } from "@ffmpeg/ffmpeg/dist/esm/types";
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
 import {fileTypeFromBuffer} from 'file-type';
 
@@ -35,11 +36,11 @@ export async function createVideo(imageBuffers: ArrayBuffer[]): Promise<string> 
 
     console.log('generated video. reading video')
 
-    const data = await ffmpeg.readFile('output.mp4');
+    const data = await ffmpeg.readFile('output.mp4').catch((err) => console.log(err))
 
     console.log('read video. generating url')
 
-    const blob = new Blob([data], { type: 'video/mp4' });
+    const blob = new Blob([data as FileData], { type: 'video/mp4' });
     const url = URL.createObjectURL(blob);
 
     console.log('done. cleaning up...')
