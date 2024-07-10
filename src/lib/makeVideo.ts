@@ -11,7 +11,10 @@ function arrayBufferToUint8Array(buffer: ArrayBuffer): Uint8Array {
 export async function createVideo(imageBuffers: ArrayBuffer[]): Promise<string> {
     const ffmpeg = new FFmpeg();
 
-    await ffmpeg.load();
+    await ffmpeg.load({
+        coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+        wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+      });
 
     for (let i = 0; i < imageBuffers.length; i++) {
         ffmpeg.writeFile(`image${i}.jpg`, new Uint8Array(imageBuffers[i]));
