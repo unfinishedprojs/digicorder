@@ -31,13 +31,17 @@ export async function createVideo(images: ArrayBuffer[]) {
 
     console.log('Writing images')
     
-    // Write each image to the virtual filesystem
-    images.forEach(async (img, i) => {
-      const filename = `image_${i}.jpg`;
-      console.log(img)
-      await ffmpeg.writeFile(filename, await arrayBufferToUint8Array(img))
-      console.log(`Written file: ${filename}, size: ${img.byteLength} bytes`);
-    })
+    for (let i = 0; i < images.length; i++) {
+        const img = images[i];
+        const filename = `image_${i}.jpg`;
+      
+        try {
+          await ffmpeg.writeFile(filename, new Uint8Array(img));
+          console.log(`Written file: ${filename}, size: ${img.byteLength} bytes`);
+        } catch (error) {
+          console.error(`Error processing ${filename}:`, error);
+        }
+      }
 
     console.log('images written')
   
