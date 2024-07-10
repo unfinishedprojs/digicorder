@@ -74,8 +74,16 @@ export default function Main() {
     const imageUrl = "http://192.168.1.137:8080/?action=snapshot";
     try {
       const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const arrayBuffer = await response.arrayBuffer();
-      images.push(arrayBuffer);
+      if (arrayBuffer.byteLength > 0) {
+        images.push(arrayBuffer);
+        console.log(`Fetched image size: ${arrayBuffer.byteLength} bytes`);
+      } else {
+        console.error("Fetched image is empty");
+      }
     } catch (error) {
       console.error("Error downloading the image:", error);
     }

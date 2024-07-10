@@ -22,17 +22,19 @@ export async function createVideo(images: ArrayBuffer[]) {
   });
 
   console.log('FFmpeg loaded');
+
+  console.time("execution")
   
   // Write each image to the virtual filesystem
   images.forEach((img, i) => {
     const filename = `image_${i}.jpg`;
     ffmpeg.writeFile(filename, new Uint8Array(img));
-    console.log(`Written file: ${filename}`);
+    console.log(`Written file: ${filename}, size: ${img.byteLength} bytes`);
   });
 
   console.log('Executing FFmpeg command');
   try {
-    await ffmpeg.exec(['-framerate', '30', '-i', 'image_%d.jpg', 'output.mp4']);
+    await ffmpeg.exec(['-framerate', '30', '-i', 'image_%d.jpg', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', 'output.mp4']);
     console.log('FFmpeg command executed successfully');
   } catch (error) {
     console.error('Error executing FFmpeg command:', error);
@@ -44,6 +46,9 @@ export async function createVideo(images: ArrayBuffer[]) {
     console.error('Output video file is empty');
     throw new Error('Failed to create video');
   }
+  console.timeEnd('execution')
+
+  console.timeLog('execution')
 
   const videoBlob = new Blob([videoData.buffer], { type: 'video/mp4' });
   const videoUrl = URL.createObjectURL(videoBlob);
