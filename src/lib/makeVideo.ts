@@ -48,6 +48,8 @@ export async function createVideo(images: Blob[]) {
   try {
     console.log(await ffmpeg.listDir('.'))
 
+    console.log(await ffmpeg.readFile('image_1.jpg'))
+
     await ffmpeg.exec(['-framerate', '30', '-pattern_type', 'glob', '-i', '*.jpg', 'output.mp4']);
     console.log('FFmpeg command executed successfully');
   } catch (error) {
