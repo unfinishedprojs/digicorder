@@ -1,7 +1,5 @@
 import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { FileData } from "@ffmpeg/ffmpeg/dist/esm/types";
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
-import {fileTypeFromBuffer} from 'file-type';
 
 const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm';
 
@@ -48,6 +46,8 @@ export async function createVideo(images: ArrayBuffer[]) {
     }
   
     const videoData = ffmpeg.readFile('output.mp4') as unknown as Uint8Array;
+
+    console.log(videoData)
     
     if (videoData.byteLength === 0) {
       console.error('Output video file is empty');
