@@ -8,7 +8,7 @@ function arrayBufferToUint8Array(buffer: ArrayBuffer): Uint8Array {
     return new Uint8Array(buffer);
 }
 
-export async function createVideo(images: Blob[]) {
+export async function createVideo(images: ArrayBuffer[]) {
   console.log("Starting FFmpeg");
   const ffmpeg = new FFmpeg();
   
@@ -30,17 +30,16 @@ export async function createVideo(images: Blob[]) {
 
   console.time("execution")
   
-  // Write each image to the virtual filesystem
   for (let i = 0; i < images.length; i++) {
     const img = images[i];
     const filename = `image_${i}.jpg`;
   
-    try {
-      const imgData = await fetchFile(img);
-      await ffmpeg.writeFile(filename, imgData);
-      console.log(`Written file: ${filename}, size: ${imgData.length} bytes`);
+    try {  
+      // Write image data to FFmpeg
+      await ffmpeg.writeFile(filename, new Uint8Array(img));
+      console.log(`Written file: ${filename}, size: ${img.byteLength} bytes`);
     } catch (error) {
-      console.error(`Error writing file ${filename}:`, error);
+      console.error(`Error processing ${filename}:`, error);
     }
   }
 

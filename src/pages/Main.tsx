@@ -25,7 +25,7 @@ export default function Main() {
   const ffmpegRef = new FFmpeg()
   let canvas;
   let recordingId;
-  let images: Blob[] = [];
+  let images = [];
 
   const handleBlink = () => {
     setIsBlinking(true);
@@ -77,10 +77,10 @@ export default function Main() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const arrayBuffer = await response.blob();
-      if (arrayBuffer.size > 0) {
+      const arrayBuffer = await response.arrayBuffer();
+      if (arrayBuffer.byteLength > 0) {
         images.push(arrayBuffer);
-        console.log(`Fetched image size: ${arrayBuffer.size} bytes`);
+        console.log(`Fetched image size: ${arrayBuffer.byteLength} bytes`);
       } else {
         console.error("Fetched image is empty");
       }
