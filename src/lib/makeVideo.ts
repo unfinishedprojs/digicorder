@@ -34,7 +34,7 @@ export async function createVideo(images: ArrayBuffer[]) {
   images.forEach(async (img, i) => {
     const filename = `image_${i}.jpg`;
     console.log(img)
-    await ffmpeg.writeFile(filename, arrayBufferToUint8Array(img))
+    await ffmpeg.writeFile(filename, img)
     console.log(`Written file: ${filename}, size: ${img.byteLength} bytes`);
   })
 
