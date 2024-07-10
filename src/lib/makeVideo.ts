@@ -48,7 +48,7 @@ export async function createVideo(images: Blob[]) {
   try {
     console.log(await ffmpeg.listDir('.'))
 
-    await ffmpeg.exec(['-framerate', '30', '-i', 'image_%d.jpg', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', 'output.mp4']);
+    await ffmpeg.exec(['-framerate', '30', '-pattern_type', 'glob', '-i', '*.jpg', 'output.mp4']);
     console.log('FFmpeg command executed successfully');
   } catch (error) {
     console.error('Error executing FFmpeg command:', error);
