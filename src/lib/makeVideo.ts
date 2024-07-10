@@ -31,13 +31,11 @@ export async function createVideo(images: ArrayBuffer[]) {
   console.time("execution")
   
   // Write each image to the virtual filesystem
-  await images.forEach(async (img, i) => {
+  images.forEach(async (img, i) => {
     const filename = `image_${i}.jpg`;
     console.log(img)
     const uint8Array = arrayBufferToUint8Array(img);
     console.log(uint8Array)
-    console.log(await fileTypeFromBuffer(uint8Array));
-    console.log(await fileTypeFromBuffer(img));
     await ffmpeg.writeFile(filename, uint8Array);
     console.log(`Written file: ${filename}, size: ${img.byteLength} bytes`);
   });
@@ -57,8 +55,6 @@ export async function createVideo(images: ArrayBuffer[]) {
     throw new Error('Failed to create video');
   }
   console.timeEnd('execution')
-
-  console.timeLog('execution')
 
   const videoBlob = new Blob([videoData.buffer], { type: 'video/mp4' });
   const videoUrl = URL.createObjectURL(videoBlob);
