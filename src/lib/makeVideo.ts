@@ -1,5 +1,6 @@
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
+import {fileTypeFromBuffer} from 'file-type';
 
 const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm';
 
@@ -35,6 +36,8 @@ export async function createVideo(images: ArrayBuffer[]) {
     console.log(img)
     const uint8Array = arrayBufferToUint8Array(img);
     console.log(uint8Array)
+    console.log(await fileTypeFromBuffer(uint8Array));
+    console.log(await fileTypeFromBuffer(img));
     console.log(`Written file: ${filename}, size: ${img.byteLength} bytes`);
     await ffmpeg.writeFile(filename, uint8Array);
   });

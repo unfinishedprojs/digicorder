@@ -13,6 +13,9 @@
     "@suid/icons-material": "*",
     "@suid/material": "*",
     "file-saver": "^2.0.5",
+    "file-type": "^19.1.1",
+    "install": "^0.13.0",
+    "npm": "^10.8.2",
     "solid-js": "*"
   },
   "devDependencies": {
