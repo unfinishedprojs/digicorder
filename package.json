@@ -12,12 +12,8 @@
     "@solidjs/router": "^0.14.1",
     "@suid/icons-material": "*",
     "@suid/material": "*",
-    "axios": "^1.7.2",
-    "extendable-media-recorder": "^9.2.7",
     "file-saver": "^2.0.5",
-    "solid-js": "*",
-    "videoshow": "^0.1.12",
-    "webm-to-mp4": "^1.0.0"
+    "solid-js": "*"
   },
   "devDependencies": {
     "@suid/vite-plugin": "*",
