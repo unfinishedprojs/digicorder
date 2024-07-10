@@ -5,7 +5,7 @@
 </head>
 <body>
   <h1>Raspberry Pi Camera</h1>
-  <img id="stream" src="" alt="Stream not available" width="640" height="480">
+  <img id="stream" src="http://192.168.1.137:8080/?action=stream" alt="Stream not available" width="640" height="480">
   <button id="start">Start Recording</button>
   <button id="stop">Stop Recording</button>
 
@@ -20,9 +20,6 @@
     document.getElementById('stop').onclick = () => {
       socket.emit('stop-recording');
     };
-
-    // Fetch the stream from the camera (using a dummy source for now)
-    <img id="stream" src="http://192.168.1.137:8080/?action=stream" />
   </script>
 </body>
 </html>
