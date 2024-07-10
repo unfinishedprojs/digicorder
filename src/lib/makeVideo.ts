@@ -33,9 +33,11 @@ export async function createVideo(imageBuffers: ArrayBuffer[]): Promise<string> 
 
     await ffmpeg.exec(['-framerate', '30', inputString, '-c:v', 'libx264', 'output.mp4']);
 
-    console.log('generated video. creating blob url')
+    console.log('generated video. reading video')
 
     const data = await ffmpeg.readFile('output.mp4');
+
+    console.log('read video. generating url')
 
     const blob = new Blob([data], { type: 'video/mp4' });
     const url = URL.createObjectURL(blob);
