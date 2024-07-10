@@ -34,12 +34,14 @@ export async function createVideo(images: ArrayBuffer[]) {
   images.forEach(async (img, i) => {
     const filename = `image_${i}.jpg`;
     console.log(img)
-    await ffmpeg.writeFile(filename, await arrayBufferToUint8Array(img))
+    await ffmpeg.writeFile(filename, arrayBufferToUint8Array(img))
     console.log(`Written file: ${filename}, size: ${img.byteLength} bytes`);
   })
 
   console.log('Executing FFmpeg command');
   try {
+    console.log(await ffmpeg.listDir('.'))
+
     await ffmpeg.exec(['-framerate', '30', '-i', 'image_%d.jpg', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', 'output.mp4']);
     console.log('FFmpeg command executed successfully');
   } catch (error) {
