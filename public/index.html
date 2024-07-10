@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Raspberry Pi Camera</title>
+</head>
+<body>
+  <h1>Raspberry Pi Camera</h1>
+  <img id="stream" src="" alt="Stream not available" width="640" height="480">
+  <button id="start">Start Recording</button>
+  <button id="stop">Stop Recording</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    document.getElementById('start').onclick = () => {
+      socket.emit('start-recording');
+    };
+
+    document.getElementById('stop').onclick = () => {
+      socket.emit('stop-recording');
+    };
+
+    // Fetch the stream from the camera (using a dummy source for now)
+    document.getElementById('stream').src = 'http://localhost:8080/stream.mjpg';
+  </script>
+</body>
+</html>
