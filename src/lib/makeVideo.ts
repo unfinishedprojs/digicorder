@@ -15,6 +15,7 @@ export async function createVideo(images: ArrayBuffer[]) {
     console.log('started ffmpeg')
     await ffmpeg.load({
       coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+      wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
     });
     console.log('loaded ffmpeg')
 
