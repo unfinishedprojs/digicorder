@@ -9,48 +9,55 @@ function arrayBufferToUint8Array(buffer: ArrayBuffer): Uint8Array {
     return new Uint8Array(buffer);
 }
 
-export async function createVideo(imageBuffers: ArrayBuffer[]): Promise<string> {
+export async function createVideo(images: ArrayBuffer[]) {
+    console.log("Starting FFmpeg");
     const ffmpeg = new FFmpeg();
     
-    console.log('Loading ffmpeg')
-
+    ffmpeg.on("log", ({ message }) => {
+      console.log(message);
+    });
+    
+    ffmpeg.on("progress", ({ progress, time }) => {
+      console.log(`${progress * 100} %, time: ${time / 1000000} s`);
+    });
+  
+    console.log('Initializing FFmpeg');
     await ffmpeg.load({
-        coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-        wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-      });
-
-      console.log('loaded, loading images')
-
-    for (let i = 0; i < imageBuffers.length; i++) {
-        ffmpeg.writeFile(`image${i}.jpg`, new Uint8Array(imageBuffers[i]));
+      coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+      wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+    });
+  
+    console.log('FFmpeg loaded');
+  
+    console.time("execution")
+    
+    // Write each image to the virtual filesystem
+    images.forEach(async (img, i) => {
+      const filename = `image_${i}.jpg`;
+      console.log(img)
+      await ffmpeg.writeFile(filename, await arrayBufferToUint8Array(img))
+      console.log(`Written file: ${filename}, size: ${img.byteLength} bytes`);
+    })
+  
+    console.log('Executing FFmpeg command');
+    try {
+      await ffmpeg.exec(['-framerate', '30', '-i', 'image_%d.jpg', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', 'output.mp4']);
+      console.log('FFmpeg command executed successfully');
+    } catch (error) {
+      console.error('Error executing FFmpeg command:', error);
     }
-
-    let inputString = '';
-    for (let i = 0; i < imageBuffers.length; i++) {
-        inputString += `-i image${i}.jpg `;
+  
+    const videoData = ffmpeg.readFile('output.mp4') as unknown as Uint8Array;
+    
+    if (videoData.byteLength === 0) {
+      console.error('Output video file is empty');
+      throw new Error('Failed to create video');
     }
-
-    console.log('loaded. generating video')
-
-    await ffmpeg.exec(['-framerate', '30', inputString, '-c:v', 'libx264', 'output.mp4']);
-
-    console.log('generated video. reading video')
-
-    const data = await ffmpeg.readFile('output.mp4').catch((err) => console.log(err))
-
-    console.log('read video. generating url')
-
-    const blob = new Blob([data as FileData], { type: 'video/mp4' });
-    const url = URL.createObjectURL(blob);
-
-    console.log('done. cleaning up...')
-
-    ffmpeg.unmount('output.mp4');
-    for (let i = 0; i < imageBuffers.length; i++) {
-        ffmpeg.unmount(`image${i}.jpg`);
-    }
-
-    console.log('everything clean, returning url now...')
-
-    return url;
-}
+    console.timeEnd('execution')
+  
+    const videoBlob = new Blob([videoData.buffer], { type: 'video/mp4' });
+    const videoUrl = URL.createObjectURL(videoBlob);
+  
+    console.log('Video URL:', videoUrl);
+    return videoUrl;
+  }
