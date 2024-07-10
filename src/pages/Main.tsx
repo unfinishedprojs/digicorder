@@ -3,6 +3,7 @@ import {
   Button,
   ButtonGroup,
   Container,
+  LinearProgress,
   List,
   ListItem,
   ListItemButton,
@@ -16,12 +17,14 @@ import { createSignal, For, onCleanup } from "solid-js";
 import { saveAs } from "file-saver";
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { createVideo } from "../lib/makeVideo";
+import { ffmpeg } from "../App";
 
 export default function Main() {
   const [isBlinking, setIsBlinking] = createSignal(false);
   const [videoUrl, setVideoUrl] = createSignal(null);
   const [videos, setVideos] = createSignal([]);
   const [isButtonDisabled, setIsButtonDisabled] = createSignal(false);
+  const [progress, setProgress] = createSignal(0);
   const ffmpegRef = new FFmpeg()
   let canvas;
   let recordingId;
@@ -63,7 +66,7 @@ export default function Main() {
       downloadLink.download = `${new Date()
         .toISOString()
         .replace(/T/, " ")
-        .replace(/\..+/, "")}.webm`;
+        .replace(/\..+/, "")}.mp4`;
       downloadLink.style.display = "none";
       document.body.appendChild(downloadLink);
       downloadLink.click();
@@ -106,6 +109,10 @@ export default function Main() {
       URL.revokeObjectURL(videoUrl());
     }
   });
+
+  ffmpeg.on('progress', ({ progress, time}) => {
+    setProgress(progress * 100)
+  })
 
   return (
     <Container>
@@ -158,12 +165,14 @@ export default function Main() {
           </ButtonGroup>
         </Stack>
 
+        <LinearProgress variant="buffer" value={progress()} sx={{ p: "5px"}} />
+
         <List>
           <For each={videos()}>
             {(video, i) => (
               <ListItem>
                 <ListItemButton ref={(el) => (video.url = el)}>
-                  <Typography>{video.date}</Typography>
+                  <Typography color="white">{video.date}</Typography>
                 </ListItemButton>
               </ListItem>
             )}
