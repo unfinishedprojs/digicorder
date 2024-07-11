@@ -1,5 +1,6 @@
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
+import { ffmpeg } from "../App";
 
 const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm';
 
@@ -9,20 +10,9 @@ function arrayBufferToUint8Array(buffer: ArrayBuffer): Uint8Array {
 
 export async function createVideo(images: ArrayBuffer[]) {
     console.log("Starting FFmpeg");
-    const ffmpeg = new FFmpeg();
     
     ffmpeg.on("log", ({ message }) => {
       console.log(message);
-    });
-    
-    ffmpeg.on("progress", ({ progress, time }) => {
-      console.log(`${progress * 100} %, time: ${time / 1000000} s`);
-    });
-  
-    console.log('Initializing FFmpeg');
-    await ffmpeg.load({
-      coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-      wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
     });
   
     console.log('FFmpeg loaded');
