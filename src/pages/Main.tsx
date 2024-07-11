@@ -111,6 +111,7 @@ export default function Main() {
   });
 
   ffmpeg.on('progress', ({ progress, time}) => {
+    console.log('Progress: ' + progress * 100)
     setProgress(progress * 100)
   })
 
