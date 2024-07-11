@@ -1,12 +1,4 @@
-import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { fetchFile, toBlobURL } from '@ffmpeg/util';
 import { ffmpeg } from "../App";
-
-const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm';
-
-function arrayBufferToUint8Array(buffer: ArrayBuffer): Uint8Array {
-    return new Uint8Array(buffer);
-}
 
 export async function createVideo(images: ArrayBuffer[]) {
     console.log("Starting FFmpeg");
