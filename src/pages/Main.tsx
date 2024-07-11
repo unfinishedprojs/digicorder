@@ -9,10 +9,10 @@ import {
   ListItemButton,
   ListItemText,
   Stack,
+  TextField,
   Typography,
 } from "@suid/material";
 import AppBarPer from "../components/AppBarPer";
-import StreamImage from "../components/StreamImage";
 import { createSignal, For, onCleanup } from "solid-js";
 import { saveAs } from "file-saver";
 import { FFmpeg } from '@ffmpeg/ffmpeg';
@@ -25,6 +25,7 @@ export default function Main() {
   const [videos, setVideos] = createSignal([]);
   const [isButtonDisabled, setIsButtonDisabled] = createSignal(false);
   const [progress, setProgress] = createSignal(0);
+  const [streamUrl, setStreamUrl] = createSignal('192.168.1.138:8080')
   const ffmpegRef = new FFmpeg()
   let canvas;
   let recordingId;
@@ -37,7 +38,7 @@ export default function Main() {
   };
 
   const handleDownloadImage = () => {
-    const imageUrl = "http://192.168.1.137:8080/?action=snapshot";
+    const imageUrl = streamUrl() + "/?action=snapshot";
     const imageName = `${new Date()
       .toISOString()
       .replace(/T/, " ")
@@ -52,29 +53,29 @@ export default function Main() {
   };
 
   const start = async () => {
-      const videoURL = await createVideo(images)
-      setVideoUrl(videoURL);
-      setVideos((prev) => [
-        ...prev,
-        {
-          url: videoURL,
-          date: new Date().toISOString().replace(/T/, " ").replace(/\..+/, ""),
-        },
-      ]);
-      const downloadLink = document.createElement("a");
-      downloadLink.href = videoURL;
-      downloadLink.download = `${new Date()
-        .toISOString()
-        .replace(/T/, " ")
-        .replace(/\..+/, "")}.mp4`;
-      downloadLink.style.display = "none";
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
+    const videoURL = await createVideo(images)
+    setVideoUrl(videoURL);
+    setVideos((prev) => [
+      ...prev,
+      {
+        url: videoURL,
+        date: new Date().toISOString().replace(/T/, " ").replace(/\..+/, ""),
+      },
+    ]);
+    const downloadLink = document.createElement("a");
+    downloadLink.href = videoURL;
+    downloadLink.download = `${new Date()
+      .toISOString()
+      .replace(/T/, " ")
+      .replace(/\..+/, "")}.mp4`;
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
   };
 
   const recordSnapshot = async () => {
-    const imageUrl = "http://192.168.1.137:8080/?action=snapshot";
+    const imageUrl = streamUrl() + "/?action=snapshot";
     try {
       const response = await fetch(imageUrl);
       if (!response.ok) {
@@ -110,7 +111,7 @@ export default function Main() {
     }
   });
 
-  ffmpeg.on('progress', ({ progress, time}) => {
+  ffmpeg.on('progress', ({ progress, time }) => {
     console.log('Progress: ' + progress * 100)
     setProgress(progress * 100)
   })
@@ -131,7 +132,15 @@ export default function Main() {
 
         <Stack>
           <div style={{ position: "relative", display: "inline-block" }}>
-            <StreamImage />
+            <img
+              src={streamUrl() + '/?action=stream'}
+              alt="Stream"
+              style={{
+                width: '100%',
+                "max-width": '800px',
+                height: 'auto'
+              }}
+            />
             {isBlinking() && (
               <div
                 style={{
@@ -166,7 +175,14 @@ export default function Main() {
           </ButtonGroup>
         </Stack>
 
-        <LinearProgress variant="buffer" value={progress()} sx={{ p: "5px"}} />
+        <LinearProgress variant="buffer" value={progress()} sx={{ p: "5px" }} />
+
+        <TextField id="outlined-basic"
+        label="Set IP"
+        variant="outlined"
+        defaultValue={streamUrl()}
+        onInput={(e) => setStreamUrl((e.target as HTMLInputElement).value)}
+        />
 
         <List>
           <For each={videos()}>
