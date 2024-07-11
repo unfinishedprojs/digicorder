@@ -4,7 +4,7 @@ import MainPage from "./pages/Main";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { toBlobURL } from "@ffmpeg/util";
 
-const baseURL = 'http://localhost/assets/lib';
+const baseURL = '/assets/lib';
 
 async function loadFfmpeg() {
   const ffmpeg = new FFmpeg();
