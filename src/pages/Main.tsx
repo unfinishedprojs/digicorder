@@ -25,7 +25,7 @@ export default function Main() {
   const [videos, setVideos] = createSignal([]);
   const [isButtonDisabled, setIsButtonDisabled] = createSignal(false);
   const [progress, setProgress] = createSignal(0);
-  const [streamUrl, setStreamUrl] = createSignal('192.168.1.138:8080')
+  const [streamUrl, setStreamUrl] = createSignal('http://' + window.location.hostname + ':8080')
   const ffmpegRef = new FFmpeg()
   let canvas;
   let recordingId;
