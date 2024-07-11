@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@suid/material";
 import AppBarPer from "../components/AppBarPer";
-import { createSignal, For, onCleanup } from "solid-js";
+import { createEffect, createSignal, For, onCleanup } from "solid-js";
 import { saveAs } from "file-saver";
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { createVideo } from "../lib/makeVideo";
@@ -111,6 +111,11 @@ export default function Main() {
     }
   });
 
+  createEffect(() => {
+    const img = document.querySelector('#stream-image');
+    img.src = `${streamUrl()}/?action=stream`;
+  });
+
   ffmpeg.on('progress', ({ progress, time }) => {
     console.log('Progress: ' + progress * 100)
     setProgress(progress * 100)
@@ -135,6 +140,7 @@ export default function Main() {
             <img
               src={streamUrl() + '/?action=stream'}
               alt="Stream"
+              id="stream-image"
               style={{
                 width: '100%',
                 "max-width": '800px',
